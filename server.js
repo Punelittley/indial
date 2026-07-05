@@ -11,6 +11,7 @@ const { put, del } = require('@vercel/blob');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', 1);
 
 // Admin Configuration via Environment Variables (fallback to hardcoded values for local run)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'indialadmin2026';
@@ -234,6 +235,7 @@ const redisRestUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_RE
 const redisRestToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 const redisConnectionUrl = [
   process.env.KV_URL,
+  process.env.KV_REDIS_URL,
   process.env.REDIS_URL,
   process.env.STORAGE_URL,
   process.env.UPSTASH_REDIS_URL,
