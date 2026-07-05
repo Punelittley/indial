@@ -628,7 +628,7 @@
 
         card.innerHTML = `
           <div class="master-card-media">
-            <img class="master-card-img" src="${escapeHtml(master.avatar || fallback)}" alt="${escapeHtml(master.name || '')}" loading="lazy" onerror="this.src='${fallback}'">
+            <img class="master-card-img" src="${escapeHtml(master.avatar || fallback)}" alt="${escapeHtml(master.name || '')}" loading="lazy" decoding="async" onerror="this.src='${fallback}'">
             <div class="master-card-num">${String(index + 1).padStart(2, '0')}</div>
           </div>
           <div class="master-card-body">
@@ -680,7 +680,7 @@
           const thumb = document.createElement('button');
           thumb.className = 'panel-thumb';
           thumb.type = 'button';
-          thumb.innerHTML = `<img src="${escapeHtml(url)}" alt="Работа мастера" loading="lazy" onerror="this.src='${fallback}'">`;
+          thumb.innerHTML = `<img src="${escapeHtml(url)}" alt="Работа мастера" loading="lazy" decoding="async" onerror="this.src='${fallback}'">`;
           thumb.addEventListener('click', () => openLightbox(url));
           panelPort.appendChild(thumb);
         });

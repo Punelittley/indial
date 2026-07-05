@@ -109,15 +109,6 @@ const globalLimiter = rateLimit({
 });
 app.use(globalLimiter);
 
-// Specific Rate Limiter for Form Submissions & Uploads (DDoS & Spam prevention)
-const formSubmissionLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 15, // Limit each IP to 15 submissions per windowMs
-  message: { error: 'Превышен лимит отправки форм. Пожалуйста, подождите 15 минут.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 // -------------------------------------------------------------
 // Multer Configuration (File Uploads)
 // -------------------------------------------------------------
@@ -429,7 +420,7 @@ app.put('/api/services', requireAdmin, async (req, res) => {
 });
 
 // 4. Admin: Upload Photo to Gallery
-app.post('/api/gallery', requireAdmin, formSubmissionLimiter, (req, res) => {
+app.post('/api/gallery', requireAdmin, (req, res) => {
   upload.single('photo')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ error: err.message });
@@ -494,7 +485,7 @@ app.delete('/api/gallery/:id', requireAdmin, async (req, res) => {
 });
 
 // 6. Submit Review (Public)
-app.post('/api/reviews', formSubmissionLimiter, async (req, res) => {
+app.post('/api/reviews', async (req, res) => {
   const { name, text, rating } = req.body;
   if (!name || !text || !rating) {
     return res.status(400).json({ error: 'Заполните все обязательные поля отзыва.' });
@@ -543,7 +534,7 @@ app.delete('/api/reviews/:id', requireAdmin, async (req, res) => {
 });
 
 // 8. Submit Application for Job/Training (Public)
-app.post('/api/apply', formSubmissionLimiter, async (req, res) => {
+app.post('/api/apply', async (req, res) => {
   const { candidateName, phone, email, type, position, message } = req.body;
   if (!candidateName || !phone || !type || !position) {
     return res.status(400).json({ error: 'Заполните все обязательные поля заявки.' });
@@ -596,7 +587,7 @@ app.delete('/api/admin/applications/:id', requireAdmin, async (req, res) => {
 });
 
 // 11. Admin: Upload master image (avatar or portfolio)
-app.post('/api/masters/upload', requireAdmin, formSubmissionLimiter, (req, res) => {
+app.post('/api/masters/upload', requireAdmin, (req, res) => {
   uploadMasterImage.single('photo')(req, res, (err) => {
     if (err) {
       return res.status(400).json({ error: err.message });
@@ -685,7 +676,10 @@ app.put('/api/masters', requireAdmin, async (req, res) => {
 // -------------------------------------------------------------
 // Serve Static Frontend Files
 // -------------------------------------------------------------
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '7d',
+  etag: true,
+}));
 
 // 404 handler — don't redirect API misses to index.html
 app.use((req, res) => {
