@@ -215,9 +215,6 @@ const deleteMasterAssetFiles = async (master) => {
   await Promise.all((master.portfolio || []).map(deleteUploadedMasterFile));
 };
 
-// -------------------------------------------------------------
-// Input Sanitization (XSS Protection)
-// -------------------------------------------------------------
 const sanitizeInput = (str) => {
   if (typeof str !== 'string') return '';
   return str
