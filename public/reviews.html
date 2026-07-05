@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Отзывы клиентов студии INDIAL в Перми. Реальные мнения гостей о стрижках и окрашивании. Более 200 отзывов на 2ГИС.">
+  <title>Отзывы — INDIAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Reviews Page Specific ── */
+    .reviews-page-hero {
+      height: 45vh;
+      min-height: 300px;
+      background: var(--off-white);
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--pale-gray);
+    }
+    .reviews-page-hero-inner { width: 100%; }
+    .reviews-page-hero-label {
+      font-size: 0.65rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .reviews-page-hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3rem, 8vw, 8rem);
+      font-weight: 300;
+      line-height: 0.9;
+      color: var(--black);
+    }
+
+    /* ── Rating summary bar ── */
+    .reviews-summary-bar {
+      padding: 3.5rem 0;
+      border-bottom: 1px solid var(--pale-gray);
+    }
+    .reviews-summary-inner {
+      display: flex;
+      align-items: center;
+      gap: 5rem;
+    }
+    .reviews-big-rating {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+    .reviews-big-score {
+      font-family: var(--font-heading);
+      font-size: 5rem;
+      font-weight: 300;
+      line-height: 1;
+      color: var(--black);
+    }
+    .reviews-big-stars { font-size: 1.1rem; letter-spacing: 3px; color: var(--black); }
+    .reviews-big-count {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      margin-top: 0.25rem;
+    }
+    .reviews-divider {
+      width: 1px;
+      height: 80px;
+      background: var(--pale-gray);
+      flex-shrink: 0;
+    }
+    .reviews-summary-text .sec-label { margin-bottom: 0.5rem; }
+    .reviews-summary-text p {
+      font-size: 0.88rem;
+      color: var(--mid-gray);
+      line-height: 1.8;
+      font-weight: 300;
+      max-width: 460px;
+    }
+    .reviews-2gis-btn {
+      margin-left: auto;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: 1px solid var(--black);
+      padding: 0.85rem 1.75rem;
+      color: var(--black);
+      transition: background 0.25s, color 0.25s;
+    }
+    .reviews-2gis-btn:hover { background: var(--black); color: var(--white); }
+    .reviews-2gis-btn i { font-size: 0.9rem; }
+
+    /* ── Grid of tiles ── */
+    .reviews-main { padding: 4rem 0 6rem; }
+    .reviews-tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--pale-gray);
+    }
+
+    /* ── Single tile ── */
+    .rev-tile {
+      padding: 3rem 2.5rem;
+      border-right: 1px solid var(--pale-gray);
+      border-bottom: 1px solid var(--pale-gray);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .rev-tile:nth-child(even) { border-right: none; }
+
+    .rev-tile-top {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .rev-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--black);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .rev-meta { flex: 1; }
+    .rev-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: 0.3px;
+    }
+    .rev-date {
+      font-size: 0.72rem;
+      color: var(--mid-gray);
+      margin-top: 2px;
+    }
+    .rev-stars {
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: var(--black);
+      flex-shrink: 0;
+    }
+
+    .rev-text {
+      font-size: 0.875rem;
+      color: var(--dark-gray);
+      line-height: 1.85;
+      font-weight: 300;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .rev-text.expanded {
+      display: block;
+      -webkit-line-clamp: unset;
+    }
+    .rev-read-more {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      cursor: pointer;
+      align-self: flex-start;
+      transition: color 0.2s;
+    }
+    .rev-read-more:hover { color: var(--black); }
+
+    .rev-reply {
+      background: var(--off-white);
+      border-left: 2px solid var(--pale-gray);
+      padding: 1rem 1.25rem;
+      margin-top: 0.25rem;
+    }
+    .rev-reply-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      margin-bottom: 0.4rem;
+    }
+    .rev-reply-text {
+      font-size: 0.8rem;
+      color: var(--dark-gray);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── More reviews CTA ── */
+    .reviews-more-cta {
+      padding: 4rem 0;
+      border-top: 1px solid var(--pale-gray);
+    }
+    .reviews-more-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 3rem;
+    }
+    .reviews-more-text .sec-label { margin-bottom: 0.6rem; }
+    .reviews-more-text h2 {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--black);
+      line-height: 1.1;
+    }
+    .reviews-more-text h2 em { font-style: italic; }
+    .reviews-more-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+    .reviews-more-actions p {
+      font-size: 0.8rem;
+      color: var(--mid-gray);
+      text-align: right;
+      line-height: 1.7;
+      max-width: 240px;
+    }
+
+    @media (max-width: 1024px) {
+      .reviews-summary-inner { gap: 3rem; flex-wrap: wrap; }
+      .reviews-2gis-btn { margin-left: 0; }
+      .reviews-divider { display: none; }
+    }
+    @media (max-width: 768px) {
+      .reviews-summary-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2rem;
+      }
+      .reviews-2gis-btn { width: 100%; justify-content: center; }
+      .reviews-tiles { grid-template-columns: 1fr; }
+      .rev-tile { border-right: none; }
+      .reviews-more-inner { flex-direction: column; align-items: flex-start; }
+      .reviews-more-actions { align-items: flex-start; }
+      .reviews-more-actions p { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" id="site-header"></header>
+  <div class="mobile-nav" id="mobile-nav"></div>
+
+  <main class="page-content">
+
+    <!-- ══ PAGE HERO ══ -->
+    <section class="reviews-page-hero">
+      <div class="container reviews-page-hero-inner">
+        <span class="reviews-page-hero-label">Мнения гостей</span>
+        <h1 class="reviews-page-hero-title">Отзывы</h1>
+      </div>
+    </section>
+
+    <!-- ══ RATING SUMMARY BAR ══ -->
+    <section class="reviews-summary-bar">
+      <div class="container">
+        <div class="reviews-summary-inner">
+          <div class="reviews-big-rating">
+            <div class="reviews-big-score">4.9</div>
+            <div class="reviews-big-stars">★★★★★</div>
+            <div class="reviews-big-count">на 2ГИС</div>
+          </div>
+          <div class="reviews-divider"></div>
+          <div class="reviews-summary-text">
+            <span class="sec-label">Репутация студии</span>
+            <p>Наши клиенты оставляют настоящие отзывы — без прикрас. Мы гордимся каждым отзывом и внимательно читаем каждое слово. Всего более 200 оценок на 2ГИС.</p>
+          </div>
+          <a href="https://2gis.ru/perm/firm/70000001051884413/tab/reviews" target="_blank" class="reviews-2gis-btn">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            Все отзывы на 2ГИС
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ REVIEWS TILES ══ -->
+    <section class="reviews-main">
+      <div class="container">
+        <div class="reviews-tiles" id="reviews-grid">
+          <!-- JS populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ MORE REVIEWS CTA ══ -->
+    <section class="reviews-more-cta">
+      <div class="container">
+        <div class="reviews-more-inner">
+          <div class="reviews-more-text">
+            <span class="sec-label">Больше отзывов</span>
+            <h2>Читайте нас<br>на <em>2ГИС</em></h2>
+          </div>
+          <div class="reviews-more-actions">
+            <p>Более 200 отзывов от реальных клиентов — переходите на нашу страницу в 2ГИС.</p>
+            <a href="https://2gis.ru/perm/firm/70000001051884413/tab/reviews" target="_blank" class="btn btn-dark">
+              Открыть 2ГИС →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/shared.js"></script>
+  <script>
+    (async () => {
+      const grid = document.getElementById('reviews-grid');
+      let reviews = [];
+      try {
+        const res = await fetch('/api/data');
+        const data = await res.json();
+        reviews = data.reviews || [];
+      } catch { reviews = []; }
+
+      if (!reviews.length) {
+        grid.innerHTML = '<p style="padding:3rem 0;color:#6B6B6B;grid-column:span 2">Пока нет отзывов.</p>';
+        return;
+      }
+
+      const formatDate = (dateStr) => {
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+      };
+
+      reviews.forEach(r => {
+        const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
+        const initials = r.initials || r.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+        const replyHTML = r.reply ? `
+          <div class="rev-reply">
+            <div class="rev-reply-label">Ответ студии INDIAL</div>
+            <div class="rev-reply-text">${r.reply}</div>
+          </div>` : '';
+
+        const tile = document.createElement('div');
+        tile.className = 'rev-tile reveal';
+        tile.innerHTML = `
+          <div class="rev-tile-top">
+            <div class="rev-avatar">${initials}</div>
+            <div class="rev-meta">
+              <div class="rev-name">${r.name}</div>
+              <div class="rev-date">${formatDate(r.date)}</div>
+            </div>
+            <div class="rev-stars">${stars}</div>
+          </div>
+          <p class="rev-text" id="rev-text-${r.id}">${r.text}</p>
+          <span class="rev-read-more" data-id="${r.id}">Читать целиком</span>
+          ${replyHTML}
+        `;
+        grid.appendChild(tile);
+      });
+
+      // Read more toggle
+      grid.addEventListener('click', e => {
+        const btn = e.target.closest('.rev-read-more');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const textEl = document.getElementById('rev-text-' + id);
+        if (textEl.classList.contains('expanded')) {
+          textEl.classList.remove('expanded');
+          btn.textContent = 'Читать целиком';
+        } else {
+          textEl.classList.add('expanded');
+          btn.textContent = 'Свернуть';
+        }
+      });
+
+      if (window.initRevealAnimations) window.initRevealAnimations();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Мастера студии красоты INDIAL в Перми — профессиональные стилисты и колористы.">
+  <title>Мастера — INDIAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .masters-intro {
+      padding: 4.5rem 0 3rem;
+      border-bottom: 1px solid var(--pale-gray);
+    }
+
+    .masters-intro-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 760px);
+      gap: 2.5rem;
+      align-items: end;
+    }
+
+    .masters-intro-text {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: var(--mid-gray);
+      font-weight: 300;
+      max-width: 520px;
+    }
+
+    .masters-section {
+      padding: 4rem 0 7rem;
+    }
+
+    .masters-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.4rem;
+    }
+
+    .master-card {
+      background: var(--white);
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--pale-gray);
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s),
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s),
+        background 0.35s ease;
+    }
+
+    .master-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .master-card:last-child:nth-child(3n + 1) {
+      grid-column: 2;
+    }
+
+    .master-card:hover,
+    .master-card:focus-visible {
+      background: var(--off-white);
+      outline: none;
+    }
+
+    .master-card-media {
+      position: relative;
+      overflow: hidden;
+      background: var(--off-white);
+      aspect-ratio: 4 / 5;
+    }
+
+    .master-card-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.22), transparent 44%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .master-card:hover .master-card-media::after,
+    .master-card:focus-visible .master-card-media::after {
+      opacity: 1;
+    }
+
+    .master-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: grayscale(12%);
+      transform: scale(1.01);
+      transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
+    }
+
+    .master-card:hover .master-card-img,
+    .master-card:focus-visible .master-card-img {
+      transform: scale(1.055);
+      filter: grayscale(0%);
+    }
+
+    .master-card-num {
+      position: absolute;
+      top: 1.25rem;
+      left: 1.25rem;
+      z-index: 2;
+      font-size: 0.64rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--white);
+      mix-blend-mode: difference;
+    }
+
+    .master-card-body {
+      min-height: 250px;
+      padding: 1.55rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.4rem;
+    }
+
+    .master-card-role {
+      display: block;
+      margin-bottom: 0.8rem;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+    }
+
+    .master-card-name {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 3vw, 2.65rem);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--black);
+    }
+
+    .master-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--pale-gray);
+    }
+
+    .master-card-spec {
+      color: var(--mid-gray);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      font-weight: 300;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .master-card-action {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--black);
+      color: var(--black);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    }
+
+    .master-card:hover .master-card-action,
+    .master-card:focus-visible .master-card-action {
+      background: var(--black);
+      color: var(--white);
+      transform: translateX(3px);
+    }
+
+    .masters-empty {
+      grid-column: 1 / -1;
+      padding: 4rem 2rem;
+      background: var(--white);
+      color: var(--mid-gray);
+      font-size: 0.9rem;
+    }
+
+    .master-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2999;
+      background: rgba(10, 10, 10, 0.48);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .master-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .master-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: min(1080px, calc(100vw - 2rem));
+      max-height: min(880px, calc(100vh - 2rem));
+      z-index: 3000;
+      background: var(--white);
+      border: 1px solid var(--pale-gray);
+      transform: translate(-50%, -48%) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease, transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: grid;
+      grid-template-columns: minmax(380px, 1.2fr) minmax(300px, 0.8fr);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.22);
+    }
+
+    .master-modal.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .panel-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--pale-gray);
+      background: var(--white);
+      color: var(--black);
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .panel-close:hover {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .panel-visual {
+      min-height: 100%;
+      background: var(--off-white);
+      overflow: hidden;
+    }
+
+    .panel-visual img {
+      width: 100%;
+      height: 100%;
+      min-height: 620px;
+      object-fit: cover;
+      object-position: center top;
+      filter: grayscale(8%);
+    }
+
+    .panel-content {
+      padding: 4.5rem 2.5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      min-width: 0;
+    }
+
+    .panel-kicker {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+    }
+
+    .panel-name {
+      font-family: var(--font-heading);
+      font-size: clamp(3.2rem, 7vw, 5.2rem);
+      font-weight: 300;
+      line-height: 0.88;
+      color: var(--black);
+      margin-top: 0.8rem;
+    }
+
+    .panel-role {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      color: var(--black);
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--black);
+    }
+
+    .panel-section {
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--pale-gray);
+    }
+
+    .panel-section-title {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 2.7px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      margin-bottom: 0.9rem;
+    }
+
+    .panel-section-text {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: var(--dark-gray);
+      font-weight: 300;
+      overflow-wrap: anywhere;
+    }
+
+    .panel-portfolio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--pale-gray);
+      border: 1px solid var(--pale-gray);
+    }
+
+    .panel-thumb {
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--off-white);
+      cursor: zoom-in;
+    }
+
+    .panel-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+      filter: grayscale(12%);
+    }
+
+    .panel-thumb:hover img {
+      transform: scale(1.08);
+      filter: grayscale(0%);
+    }
+
+    .panel-book {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      min-height: 52px;
+      border: 1px solid var(--black);
+      color: var(--black);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .panel-book:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .portfolio-lb {
+      position: fixed;
+      inset: 0;
+      z-index: 4000;
+      background: rgba(10, 10, 10, 0.96);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .portfolio-lb.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .portfolio-lb img {
+      max-width: min(96vw, 1200px);
+      max-height: 92vh;
+      object-fit: contain;
+      transform: scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .portfolio-lb.open img {
+      transform: scale(1);
+    }
+
+    .portfolio-lb-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.75);
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .portfolio-lb-close:hover {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    @media (max-width: 1100px) {
+      .masters-intro-inner {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .masters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .master-card:last-child:nth-child(3n + 1) {
+        grid-column: auto;
+      }
+
+      .master-modal {
+        width: min(680px, calc(100vw - 2rem));
+        grid-template-columns: 1fr;
+      }
+
+      .panel-visual {
+        min-height: auto;
+      }
+
+      .panel-visual img {
+        height: min(58vh, 520px);
+        min-height: 380px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .masters-intro {
+        padding: 3rem 0 2.5rem;
+      }
+
+      .masters-section {
+        padding: 2.5rem 0 5rem;
+      }
+
+      .masters-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .master-card:last-child:nth-child(3n + 1) {
+        grid-column: auto;
+      }
+
+      .master-card {
+        min-height: 100%;
+      }
+
+      .master-card-media {
+        aspect-ratio: 4 / 5;
+      }
+
+      .master-card-body {
+        min-height: 220px;
+        padding: 1.25rem;
+      }
+
+      .panel-content {
+        padding: 5rem 1.25rem 2rem;
+      }
+
+      .panel-portfolio {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" id="site-header"></header>
+  <div class="mobile-nav" id="mobile-nav"></div>
+
+  <main class="page-content">
+    <section class="page-hero">
+      <div class="container page-hero-inner">
+        <p class="page-hero-label">Команда студии</p>
+        <h1 class="page-hero-title">Мастера</h1>
+      </div>
+    </section>
+
+    <section class="masters-intro">
+      <div class="container masters-intro-inner">
+        <div class="reveal">
+          <span class="sec-label">INDIAL · Пермь</span>
+          <h2 class="sec-title">Люди, которым доверяют <em>цвет, форму и настроение</em></h2>
+        </div>
+        <p class="masters-intro-text reveal">
+          У каждого мастера свой почерк, но общий принцип один: внимательно слышать запрос, бережно работать с волосами и создавать результат, который легко носить после выхода из салона.
+        </p>
+      </div>
+    </section>
+
+    <section class="masters-section">
+      <div class="container">
+        <div class="masters-grid" id="masters-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="master-modal-backdrop" id="modal-backdrop"></div>
+  <aside class="master-modal" id="master-modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <button class="panel-close" id="panel-close" aria-label="Закрыть">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="panel-visual">
+      <img id="panel-avatar" src="" alt="">
+    </div>
+    <div class="panel-content">
+      <div>
+        <div class="panel-kicker">Профиль мастера</div>
+        <div class="panel-name" id="panel-name"></div>
+      </div>
+      <div class="panel-role" id="panel-role"></div>
+      <div class="panel-section">
+        <div class="panel-section-title">Специализация</div>
+        <div class="panel-section-text" id="panel-spec"></div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section-title">Опыт и подход</div>
+        <div class="panel-section-text" id="panel-exp"></div>
+      </div>
+      <div class="panel-section" id="portfolio-section">
+        <div class="panel-section-title">Портфолио</div>
+        <div class="panel-portfolio" id="panel-portfolio"></div>
+      </div>
+      <a href="https://vk.com/indial59?w=app51715800_-104632367" target="_blank" class="panel-book">
+        <span>Записаться к мастеру</span>
+        <i class="fa-solid fa-arrow-right-long"></i>
+      </a>
+    </div>
+  </aside>
+
+  <div class="portfolio-lb" id="portfolio-lb">
+    <span class="portfolio-lb-close" id="lb-close"><i class="fa-solid fa-xmark"></i></span>
+    <img id="lb-img" src="" alt="">
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="/js/shared.js"></script>
+  <script>
+    (async () => {
+      const grid = document.getElementById('masters-grid');
+      const modal = document.getElementById('master-modal');
+      const backdrop = document.getElementById('modal-backdrop');
+      const panelClose = document.getElementById('panel-close');
+      const panelAvatar = document.getElementById('panel-avatar');
+      const panelName = document.getElementById('panel-name');
+      const panelRole = document.getElementById('panel-role');
+      const panelSpec = document.getElementById('panel-spec');
+      const panelExp = document.getElementById('panel-exp');
+      const panelPort = document.getElementById('panel-portfolio');
+      const portfolioSection = document.getElementById('portfolio-section');
+      const lb = document.getElementById('portfolio-lb');
+      const lbImg = document.getElementById('lb-img');
+      const lbClose = document.getElementById('lb-close');
+      const fallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='800'><rect fill='%23F5F5F5' width='100%' height='100%'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236B6B6B' font-family='Arial' font-size='22'>INDIAL</text></svg>";
+
+      const escapeHtml = (value = '') => String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      const shortText = (value = '') => {
+        const text = String(value).trim();
+        return text.length > 150 ? `${text.slice(0, 150)}...` : text;
+      };
+
+      let masters = [];
+
+      try {
+        const res = await fetch('/api/data');
+        if (!res.ok) throw new Error('Не удалось загрузить данные');
+        const data = await res.json();
+        masters = data.masters || [];
+      } catch (error) {
+        console.error(error);
+      }
+
+      if (!masters.length) {
+        grid.innerHTML = '<p class="masters-empty">Список мастеров скоро появится.</p>';
+        return;
+      }
+
+      masters.forEach((master, index) => {
+        const card = document.createElement('article');
+        card.className = 'master-card';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `Открыть профиль ${master.name || 'мастера'}`);
+        card.style.setProperty('--delay', `${Math.min(index * 0.08, 0.48)}s`);
+
+        card.innerHTML = `
+          <div class="master-card-media">
+            <img class="master-card-img" src="${escapeHtml(master.avatar || fallback)}" alt="${escapeHtml(master.name || '')}" loading="lazy" onerror="this.src='${fallback}'">
+            <div class="master-card-num">${String(index + 1).padStart(2, '0')}</div>
+          </div>
+          <div class="master-card-body">
+            <div>
+              <span class="master-card-role">${escapeHtml(master.role || 'Мастер INDIAL')}</span>
+              <h2 class="master-card-name">${escapeHtml(master.name || 'Мастер')}</h2>
+            </div>
+            <div class="master-card-bottom">
+              <p class="master-card-spec">${escapeHtml(shortText(master.specialization || 'Специализация скоро появится.'))}</p>
+              <span class="master-card-action"><i class="fa-solid fa-arrow-right-long"></i></span>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => openModal(master));
+        card.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openModal(master);
+          }
+        });
+        grid.appendChild(card);
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.master-card').forEach((card) => observer.observe(card));
+
+      function openModal(master) {
+        panelAvatar.src = master.avatar || fallback;
+        panelAvatar.alt = master.name || '';
+        panelName.textContent = master.name || 'Мастер';
+        panelRole.textContent = master.role || 'Мастер INDIAL';
+        panelSpec.textContent = master.specialization || 'Информация скоро появится.';
+        panelExp.textContent = master.experience || 'Информация скоро появится.';
+
+        panelPort.innerHTML = '';
+        const portfolio = Array.isArray(master.portfolio) ? master.portfolio : [];
+        portfolioSection.style.display = portfolio.length ? '' : 'none';
+
+        portfolio.forEach((url) => {
+          const thumb = document.createElement('button');
+          thumb.className = 'panel-thumb';
+          thumb.type = 'button';
+          thumb.innerHTML = `<img src="${escapeHtml(url)}" alt="Работа мастера" loading="lazy" onerror="this.src='${fallback}'">`;
+          thumb.addEventListener('click', () => openLightbox(url));
+          panelPort.appendChild(thumb);
+        });
+
+        modal.classList.add('open');
+        backdrop.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        modal.scrollTop = 0;
+      }
+
+      function closeModal() {
+        modal.classList.remove('open');
+        backdrop.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      function openLightbox(url) {
+        lbImg.src = url;
+        lb.classList.add('open');
+      }
+
+      function closeLightbox() {
+        lb.classList.remove('open');
+        lbImg.src = '';
+      }
+
+      panelClose.addEventListener('click', closeModal);
+      backdrop.addEventListener('click', closeModal);
+      lbClose.addEventListener('click', closeLightbox);
+      lb.addEventListener('click', (event) => {
+        if (event.target === lb) closeLightbox();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeLightbox();
+          closeModal();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

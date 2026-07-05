@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Вход в систему — INDIAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
+  <style>
+    :root {
+      --black:      #0A0A0A;
+      --charcoal:   #1A1A1A;
+      --mid-gray:   #6B6B6B;
+      --pale-gray:  #E8E8E8;
+      --off-white:  #F5F5F5;
+      --white:      #FFFFFF;
+      --danger:     #B91C1C;
+      --font-heading: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Inter', -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--off-white);
+      color: var(--black);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .login-card {
+      background: var(--white);
+      border: 1px solid var(--pale-gray);
+      padding: 4rem 3.5rem;
+      width: 100%;
+      max-width: 440px;
+    }
+    .login-back {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      margin-bottom: 3rem;
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .login-back:hover { color: var(--black); }
+    .login-logo {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 300;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+    .login-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .login-subtitle {
+      font-size: 0.82rem;
+      color: var(--mid-gray);
+      font-weight: 300;
+      margin-bottom: 2.5rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .form-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--pale-gray);
+      background: var(--white);
+      font-size: 0.88rem;
+      color: var(--black);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--black); }
+    .btn-admin-submit {
+      width: 100%;
+      padding: 1rem;
+      background: var(--black);
+      color: var(--white);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn-admin-submit:hover { background: var(--charcoal); }
+    .login-error {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--danger);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <a href="/" class="login-back">← Вернуться на сайт</a>
+    <div class="login-logo">INDIAL</div>
+    <h1 class="login-title">Панель управления</h1>
+    <p class="login-subtitle">Введите пароль администратора</p>
+    <form id="admin-login-form">
+      <div class="form-group">
+        <label class="form-label" for="admin-password">Пароль</label>
+        <input type="password" id="admin-password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-admin-submit">Войти</button>
+    </form>
+    <div id="login-error-msg" class="login-error">Неверный пароль. Попробуйте еще раз.</div>
+  </div>
+
+  <script>
+    document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = document.getElementById('admin-password').value;
+      const errorMsg = document.getElementById('login-error-msg');
+      
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.error || 'Ошибка входа');
+        }
+        
+        localStorage.setItem('adminToken', data.token);
+        errorMsg.style.display = 'none';
+        
+        // Redirect to admin panel page
+        window.location.href = '/admin.html';
+      } catch (err) {
+        errorMsg.textContent = err.message;
+        errorMsg.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

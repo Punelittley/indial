@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Панель управления — INDIAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="dashboard-container" id="dashboard-section">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-name">INDIAL</span>
+        <span class="sidebar-brand-sub">Admin Panel</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="services-tab">
+          <span class="nav-icon">01</span> Прайс-лист
+        </button>
+        <button class="nav-item" data-tab="gallery-tab">
+          <span class="nav-icon">02</span> Галерея
+        </button>
+        <button class="nav-item" data-tab="masters-tab">
+          <span class="nav-icon">03</span> Мастера
+        </button>
+        <button class="nav-item" data-tab="settings-tab">
+          <span class="nav-icon">04</span> Настройки
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="index.html" class="btn-site-link">← На сайт</a>
+        <button class="btn-logout" id="logout-btn">Выйти</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="main-header">
+        <div>
+          <h2 id="current-tab-title">Управление прайс-листом</h2>
+          <p id="current-tab-desc">Добавление, редактирование и удаление услуг в категориях</p>
+        </div>
+        <div class="header-admin-badge">Администратор</div>
+      </header>
+
+      <!-- TAB 1: SERVICES -->
+      <section class="tab-content active" id="services-tab">
+        <div class="card">
+          <div class="card-header">
+            <h3>Структура прайс-листа</h3>
+            <div class="card-actions">
+              <button class="btn-secondary" id="add-category-btn">+ Категория</button>
+              <button class="btn-primary" id="save-services-btn">Сохранить изменения</button>
+            </div>
+          </div>
+          <div class="card-body" id="services-editor-container">
+            <!-- Dynamically rendered -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: GALLERY -->
+      <section class="tab-content" id="gallery-tab">
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Загрузить фотографию</h3>
+            </div>
+            <div class="card-body">
+              <form id="gallery-upload-form" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label class="form-label" for="photo-file">Изображение</label>
+                  <div class="upload-dropzone" id="dropzone">
+                    <div class="dropzone-icon">↑</div>
+                    <p>Перетащите фото сюда или нажмите для выбора</p>
+                    <span class="file-name-indicator" id="file-name-label">Файл не выбран</span>
+                    <input type="file" id="photo-file" name="photo" accept="image/*" required style="display: none;">
+                  </div>
+                </div>
+                <input type="hidden" name="category" value="hair">
+                <input type="hidden" name="description" value="">
+                <button type="submit" class="btn-primary" style="width:100%;margin-top:0.5rem;">Загрузить на сервер</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Текущая галерея</h3>
+            </div>
+            <div class="card-body">
+              <div class="gallery-manager-grid" id="gallery-manager-container">
+                <!-- Dynamic -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: MASTERS -->
+      <section class="tab-content" id="masters-tab">
+        <div class="card">
+          <div class="card-header">
+            <h3>Команда мастеров</h3>
+            <div class="card-actions">
+              <button class="btn-secondary" id="add-master-btn">+ Мастер</button>
+              <button class="btn-primary" id="save-masters-btn">Сохранить изменения</button>
+            </div>
+          </div>
+          <div class="card-body" id="masters-editor-container"></div>
+        </div>
+      </section>
+
+      <!-- TAB 4: SETTINGS -->
+      <section class="tab-content" id="settings-tab">
+        <div class="card">
+          <div class="card-header">
+            <h3>Смена пароля</h3>
+          </div>
+          <div class="card-body">
+            <form class="settings-form" id="password-change-form">
+              <div class="form-group">
+                <label class="form-label" for="current-admin-password">Текущий пароль</label>
+                <input type="password" class="form-input" id="current-admin-password" autocomplete="current-password" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="new-admin-password">Новый пароль</label>
+                <input type="password" class="form-input" id="new-admin-password" autocomplete="new-password" minlength="8" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="confirm-admin-password">Повторите новый пароль</label>
+                <input type="password" class="form-input" id="confirm-admin-password" autocomplete="new-password" minlength="8" required>
+              </div>
+              <button class="btn-primary" type="submit">Сохранить пароль</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-notification">
+    <span class="toast-icon" id="toast-icon-element">✓</span>
+    <span class="toast-message" id="toast-message-text">Успешно!</span>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

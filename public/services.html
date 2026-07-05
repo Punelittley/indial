@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Прайс-лист студии красоты INDIAL в Перми. Цены на стрижки, сложные окрашивания, уходы и макияж. Удобный и понятный каталог услуг.">
+  <title>Услуги и цены — INDIAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Services Redesign Layout ── */
+    .services-main-layout {
+      display: grid;
+      grid-template-columns: 2.8fr 9.2fr;
+      gap: 4rem;
+      padding: 5rem 0 7rem;
+      align-items: start;
+    }
+
+    /* Sticky Sidebar index */
+    .services-sidebar {
+      position: sticky;
+      top: 110px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .services-sidebar-title {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--light-gray);
+      margin-bottom: 1rem;
+      padding-left: 0.75rem;
+    }
+
+    .sidebar-anchor {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      padding: 0.75rem 1rem;
+      border-left: 1px solid var(--pale-gray);
+      text-align: left;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .sidebar-anchor.active,
+    .sidebar-anchor:hover {
+      color: var(--black);
+      border-left-color: var(--black);
+      padding-left: 1.5rem;
+    }
+
+    /* Services List column */
+    .services-sections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5rem;
+    }
+
+    .svc-cat-block {
+      scroll-margin-top: 110px;
+    }
+
+    .svc-cat-header {
+      border-bottom: 1px solid var(--black);
+      padding-bottom: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .svc-cat-title {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 400;
+      color: var(--black);
+      line-height: 1.1;
+    }
+
+    .svc-items-table {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .svc-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 3rem;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid var(--pale-gray);
+      transition: opacity 0.25s;
+    }
+
+    .svc-row:hover {
+      opacity: 0.85;
+    }
+
+    .svc-row-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .svc-row-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: 0.3px;
+    }
+
+    .svc-row-meta {
+      font-size: 0.78rem;
+      color: var(--mid-gray);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .svc-row-price {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--black);
+      align-self: start;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* Mobile header category bar */
+    .mobile-cats-bar {
+      display: none;
+      position: sticky;
+      top: 72px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--pale-gray);
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      gap: 0.5rem;
+      scrollbar-width: none; /* Hide scrollbar Firefox */
+    }
+    
+    .mobile-cats-bar::-webkit-scrollbar {
+      display: none; /* Hide scrollbar Chrome/Safari */
+    }
+
+    .mobile-cat-btn {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      border: 1px solid var(--pale-gray);
+      padding: 0.5rem 1rem;
+      background: transparent;
+      transition: all 0.25s;
+    }
+
+    .mobile-cat-btn.active {
+      color: var(--white);
+      background: var(--black);
+      border-color: var(--black);
+    }
+
+    @media (max-width: 1100px) {
+      .services-main-layout {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding-top: 3rem;
+      }
+      .services-sidebar { display: none; }
+      .mobile-cats-bar { display: flex; }
+      .svc-cat-block { scroll-margin-top: 135px; }
+    }
+
+    @media (max-width: 768px) {
+      .svc-row { gap: 1.5rem; }
+      .svc-cat-title { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" id="site-header"></header>
+  <div class="mobile-nav" id="mobile-nav"></div>
+
+  <!-- Mobile sticky category nav -->
+  <div class="mobile-cats-bar" id="mobile-categories"></div>
+
+  <main class="page-content">
+
+    <!-- ══ PAGE HERO ══ -->
+    <section class="page-hero">
+      <div class="container page-hero-inner">
+        <p class="page-hero-label">Прайс-лист</p>
+        <h1 class="page-hero-title">Услуги</h1>
+      </div>
+    </section>
+
+    <!-- ══ SERVICES CONTENT ══ -->
+    <div class="container">
+      <div class="services-main-layout">
+        
+        <!-- Sidebar Navigation Index (Desktop Only) -->
+        <aside class="services-sidebar">
+          <div class="services-sidebar-title">Навигация</div>
+          <div id="sidebar-anchors-container" style="display:flex;flex-direction:column;gap:0.4rem;">
+            <!-- Rendered by JS -->
+          </div>
+        </aside>
+
+        <!-- Main Services Column -->
+        <div class="services-sections-list" id="services-panels">
+          <!-- Rendered by JS -->
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/shared.js"></script>
+  <script>
+    (async () => {
+      const anchorsContainer = document.getElementById('sidebar-anchors-container');
+      const panelsContainer = document.getElementById('services-panels');
+      const mobileCatsContainer = document.getElementById('mobile-categories');
+
+      let services = [];
+      try {
+        const res = await fetch('/api/data');
+        const data = await res.json();
+        services = data.services || [];
+      } catch (e) {
+        panelsContainer.innerHTML = '<p style="color:#6B6B6B;padding:3rem 0">Не удалось загрузить прайс-лист.</p>';
+        return;
+      }
+
+      if (!services.length) {
+        panelsContainer.innerHTML = '<p style="color:#6B6B6B;padding:3rem 0">Прайс-лист пока пуст.</p>';
+        return;
+      }
+
+      services.forEach((cat, idx) => {
+        // 1. Sidebar anchor (Desktop)
+        const anchor = document.createElement('button');
+        anchor.className = 'sidebar-anchor' + (idx === 0 ? ' active' : '');
+        anchor.textContent = cat.categoryName;
+        anchor.dataset.target = cat.id;
+        anchor.addEventListener('click', () => {
+          scrollToCategory(cat.id);
+        });
+        anchorsContainer.appendChild(anchor);
+
+        // 2. Mobile category button
+        const mobBtn = document.createElement('button');
+        mobBtn.className = 'mobile-cat-btn' + (idx === 0 ? ' active' : '');
+        mobBtn.textContent = cat.categoryName;
+        mobBtn.dataset.target = cat.id;
+        mobBtn.addEventListener('click', () => {
+          scrollToCategory(cat.id);
+        });
+        mobileCatsContainer.appendChild(mobBtn);
+
+        // 3. Category Block
+        const block = document.createElement('section');
+        block.className = 'svc-cat-block';
+        block.id = cat.id;
+        
+        let rowsHTML = '';
+        (cat.items || []).forEach(item => {
+          const formattedPrice = !isNaN(item.price) && item.price.trim() !== '' 
+            ? parseFloat(item.price).toLocaleString('ru-RU') + ' ₽' 
+            : item.price;
+
+          rowsHTML += `
+            <div class="svc-row">
+              <div class="svc-row-left">
+                <div class="svc-row-name">${item.name}</div>
+                <div class="svc-row-meta">
+                  ${item.duration ? `<span><i class="fa-regular fa-clock"></i> ${item.duration}</span>` : ''}
+                  ${item.duration && item.description ? '&nbsp;·&nbsp;' : ''}
+                  ${item.description ? `<span>${item.description}</span>` : ''}
+                </div>
+              </div>
+              <div class="svc-row-price">${formattedPrice}</div>
+            </div>
+          `;
+        });
+
+        block.innerHTML = `
+          <div class="svc-cat-header">
+            <h2 class="svc-cat-title">${cat.categoryName}</h2>
+          </div>
+          <div class="svc-items-table">
+            ${rowsHTML || '<p style="color:#6B6B6B;font-size:0.85rem">Нет услуг в этой категории.</p>'}
+          </div>
+        `;
+        panelsContainer.appendChild(block);
+      });
+
+      function scrollToCategory(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+          // Update URL hash
+          window.history.pushState(null, null, '#' + id);
+        }
+      }
+
+      // Intersection Observer to highlight active category on scroll
+      const observerOptions = {
+        root: null,
+        rootMargin: '-120px 0px -60% 0px',
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const activeId = entry.target.id;
+            
+            // Highlight Desktop sidebar
+            document.querySelectorAll('.sidebar-anchor').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.target === activeId);
+            });
+
+            // Highlight Mobile category bar
+            document.querySelectorAll('.mobile-cat-btn').forEach(btn => {
+              const isActive = btn.dataset.target === activeId;
+              btn.classList.toggle('active', isActive);
+              if (isActive) {
+                // Scroll button into view inside mobile category bar
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+              }
+            });
+          }
+        });
+      }, observerOptions);
+
+      // Observe all blocks
+      document.querySelectorAll('.svc-cat-block').forEach(block => {
+        observer.observe(block);
+      });
+
+      // Jump to initial hash if present
+      setTimeout(() => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+          const el = document.getElementById(hash);
+          if (el) el.scrollIntoView({ behavior: 'auto' });
+        }
+      }, 200);
+
+    })();
+  </script>
+</body>
+</html>
