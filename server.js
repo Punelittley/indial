@@ -69,7 +69,7 @@ const verifyAdminPassword = (password, storedPassword) => {
 const DATA_FILE = path.join(__dirname, 'data.json');
 const UPLOAD_DIR = path.join(__dirname, 'public', 'img');
 const IS_VERCEL = process.env.VERCEL === '1' || !!process.env.VERCEL_ENV;
-const useBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
+const useBlob = !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
 
 // Ensure upload directory exists
 if (!IS_VERCEL && !fs.existsSync(UPLOAD_DIR)) {
