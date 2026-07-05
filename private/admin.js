@@ -63,6 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#039;');
   }
 
+  function getImageSrc(value = '') {
+    const src = String(value);
+    return src.startsWith('http') || src.startsWith('/') ? src : `/img/${src}`;
+  }
+
   // Toast Notifications
   const toast = document.getElementById('toast-notification');
   const toastMsg = document.getElementById('toast-message-text');
@@ -498,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const div = document.createElement('div');
       div.className = 'gallery-manager-item';
       
-      const imageSrc = `/img/${photo.filename}`;
+      const imageSrc = getImageSrc(photo.filename);
       const fallbackSrc = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='130' height='130' viewBox='0 0 130 130'><rect width='100%' height='100%' fill='%23E8E8E8'/><text x='50%' y='50%' font-family='sans-serif' font-size='10' fill='%236B6B6B' text-anchor='middle'>ФОТО РАБОТЫ</text></svg>`;
 
       div.innerHTML = `

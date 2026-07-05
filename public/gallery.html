@@ -371,6 +371,11 @@
         'nails': 'Ногтевой сервис'
       };
 
+      const getImageSrc = (value = '') => {
+        const src = String(value);
+        return src.startsWith('http') || src.startsWith('/') ? src : `/img/${src}`;
+      };
+
       function renderGallery() {
         container.innerHTML = '';
         galleryItems.forEach((photo, index) => {
@@ -385,7 +390,7 @@
 
           cell.innerHTML = `
             <img
-              src="/img/${photo.filename}"
+              src="${getImageSrc(photo.filename)}"
               alt="${photo.description || 'Работа студии INDIAL'}"
               loading="lazy"
               decoding="async"
@@ -414,7 +419,7 @@
       function showPhoto(index) {
         const photo = galleryItems[index];
         if (!photo) return;
-        lightboxImg.src = `/img/${photo.filename}`;
+        lightboxImg.src = getImageSrc(photo.filename);
         lightboxImg.alt = photo.description || 'Работа студии INDIAL';
         currentIndex = index;
       }

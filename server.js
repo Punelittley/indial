@@ -6,6 +6,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const multer = require('multer');
+const { createClient } = require('redis');
+const { put, del } = require('@vercel/blob');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -65,9 +67,11 @@ const verifyAdminPassword = (password, storedPassword) => {
 // Paths
 const DATA_FILE = path.join(__dirname, 'data.json');
 const UPLOAD_DIR = path.join(__dirname, 'public', 'img');
+const IS_VERCEL = process.env.VERCEL === '1' || !!process.env.VERCEL_ENV;
+const useBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
 // Ensure upload directory exists
-if (!fs.existsSync(UPLOAD_DIR)) {
+if (!IS_VERCEL && !fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
@@ -84,7 +88,7 @@ app.use(
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-        imgSrc: ["'self'", "data:", "blob:"],
+        imgSrc: ["'self'", "data:", "blob:", "https:"],
         connectSrc: ["'self'"],
         frameSrc: ["'self'", "https://yandex.ru", "https://*.yandex.ru"],
       },
@@ -112,15 +116,20 @@ app.use(globalLimiter);
 // -------------------------------------------------------------
 // Multer Configuration (File Uploads)
 // -------------------------------------------------------------
-const storage = multer.diskStorage({
+const makeUploadFilename = (prefix, originalName) => {
+  const ext = path.extname(originalName || '').toLowerCase();
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+  return `${prefix}-${uniqueSuffix}${ext}`;
+};
+
+const useMemoryUploads = IS_VERCEL || useBlob;
+
+const storage = useMemoryUploads ? multer.memoryStorage() : multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
-    // Generate unique name keeping the original extension
-    const ext = path.extname(file.originalname);
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, `photo-${uniqueSuffix}${ext}`);
+    cb(null, makeUploadFilename('photo', file.originalname));
   },
 });
 
@@ -142,14 +151,12 @@ const upload = multer({
   fileFilter: imageFilter,
 });
 
-const masterUploadStorage = multer.diskStorage({
+const masterUploadStorage = useMemoryUploads ? multer.memoryStorage() : multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, `master-${uniqueSuffix}${ext}`);
+    cb(null, makeUploadFilename('master', file.originalname));
   },
 });
 
@@ -159,10 +166,37 @@ const uploadMasterImage = multer({
   fileFilter: imageFilter,
 });
 
-const deleteUploadedMasterFile = (imagePath) => {
+const isExternalUrl = (value) => /^https?:\/\//i.test(String(value || ''));
+
+const uploadFileToBlob = async (file, prefix) => {
+  if (!useBlob) {
+    throw new Error('Для загрузки изображений на Vercel подключите Blob Storage.');
+  }
+
+  const filename = makeUploadFilename(prefix, file.originalname);
+  const blob = await put(`img/${filename}`, file.buffer, {
+    access: 'public',
+    addRandomSuffix: false,
+    contentType: file.mimetype,
+  });
+
+  return blob.url;
+};
+
+const deleteUploadedImage = async (imagePath, expectedPrefix) => {
   if (!imagePath || typeof imagePath !== 'string') return;
+  if (isExternalUrl(imagePath)) {
+    if (!useBlob) return;
+    try {
+      await del(imagePath);
+    } catch (err) {
+      console.error('Error deleting blob image:', err);
+    }
+    return;
+  }
+
   const filename = path.basename(imagePath);
-  if (!filename.startsWith('master-')) return;
+  if (!filename.startsWith(expectedPrefix)) return;
   const filePath = path.join(UPLOAD_DIR, filename);
   if (fs.existsSync(filePath)) {
     try {
@@ -173,10 +207,12 @@ const deleteUploadedMasterFile = (imagePath) => {
   }
 };
 
-const deleteMasterAssetFiles = (master) => {
+const deleteUploadedMasterFile = (imagePath) => deleteUploadedImage(imagePath, 'master-');
+
+const deleteMasterAssetFiles = async (master) => {
   if (!master) return;
-  deleteUploadedMasterFile(master.avatar);
-  (master.portfolio || []).forEach(deleteUploadedMasterFile);
+  await deleteUploadedMasterFile(master.avatar);
+  await Promise.all((master.portfolio || []).map(deleteUploadedMasterFile));
 };
 
 // -------------------------------------------------------------
@@ -194,32 +230,32 @@ const sanitizeInput = (str) => {
 };
 
 // -------------------------------------------------------------
-// Database Helpers & Adapters (Local JSON file / Vercel KV)
+// Database Helpers & Adapters (Local JSON file / Redis / Upstash REST)
 // -------------------------------------------------------------
-const useKV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+const DATA_KEY = 'indial_data';
+const redisRestUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const redisRestToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const redisConnectionUrl = [
+  process.env.KV_URL,
+  process.env.REDIS_URL,
+  process.env.STORAGE_URL,
+  process.env.UPSTASH_REDIS_URL,
+].find((value) => /^rediss?:\/\//i.test(String(value || '')));
 
-if (useKV) {
-  console.log('=== Database Adapter: Using Vercel KV Storage ===');
+const useRedisRest = !!(redisRestUrl && redisRestToken);
+const useRedisUrl = !!redisConnectionUrl;
+let redisClient;
+let redisClientConnecting;
+
+if (useRedisRest) {
+  console.log('=== Database Adapter: Using Redis REST Storage ===');
+} else if (useRedisUrl) {
+  console.log('=== Database Adapter: Using Redis URL Storage ===');
 } else {
   console.log('=== Database Adapter: Using Local data.json File ===');
 }
 
-const readData = async () => {
-  if (useKV) {
-    try {
-      const res = await fetch(`${process.env.KV_REST_API_URL}/get/indial_data`, {
-        headers: { Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}` }
-      });
-      const body = await res.json();
-      if (body && body.result) {
-        return typeof body.result === 'string' ? JSON.parse(body.result) : body.result;
-      }
-    } catch (error) {
-      console.error('Error reading from Vercel KV:', error);
-    }
-  }
-
-  // Fallback to local file
+const readLocalData = () => {
   try {
     const raw = fs.readFileSync(DATA_FILE, 'utf8');
     return JSON.parse(raw);
@@ -229,13 +265,65 @@ const readData = async () => {
   }
 };
 
-const writeData = async (data) => {
-  if (useKV) {
+const getRedisClient = async () => {
+  if (!useRedisUrl) return null;
+  if (redisClient?.isReady) return redisClient;
+
+  if (!redisClient) {
+    redisClient = createClient({ url: redisConnectionUrl });
+    redisClient.on('error', (error) => {
+      console.error('Redis client error:', error);
+    });
+  }
+
+  if (!redisClientConnecting) {
+    redisClientConnecting = redisClient.connect().finally(() => {
+      redisClientConnecting = null;
+    });
+  }
+
+  await redisClientConnecting;
+  return redisClient;
+};
+
+const readData = async () => {
+  if (useRedisRest) {
     try {
-      const res = await fetch(`${process.env.KV_REST_API_URL}/set/indial_data`, {
+      const res = await fetch(`${redisRestUrl}/get/${DATA_KEY}`, {
+        headers: { Authorization: `Bearer ${redisRestToken}` }
+      });
+      const body = await res.json();
+      if (body && body.result) {
+        return typeof body.result === 'string' ? JSON.parse(body.result) : body.result;
+      }
+    } catch (error) {
+      console.error('Error reading from Redis REST:', error);
+    }
+  }
+
+  if (useRedisUrl) {
+    try {
+      const client = await getRedisClient();
+      const raw = await client.get(DATA_KEY);
+      if (raw) {
+        return typeof raw === 'string' ? JSON.parse(raw) : raw;
+      }
+    } catch (error) {
+      console.error('Error reading from Redis URL:', error);
+    }
+  }
+
+  // Fallback seed: if remote storage is empty, read bundled data.json.
+  return readLocalData();
+};
+
+const writeData = async (data) => {
+  if (useRedisRest) {
+    try {
+      const res = await fetch(`${redisRestUrl}/set/${DATA_KEY}`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+          Authorization: `Bearer ${redisRestToken}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(JSON.stringify(data)) // Value stored in Upstash should be a serialized string
@@ -243,7 +331,19 @@ const writeData = async (data) => {
       const body = await res.json();
       if (body && body.result === 'OK') return true;
     } catch (error) {
-      console.error('Error writing to Vercel KV:', error);
+      console.error('Error writing to Redis REST:', error);
+      return false;
+    }
+    return false;
+  }
+
+  if (useRedisUrl) {
+    try {
+      const client = await getRedisClient();
+      await client.set(DATA_KEY, JSON.stringify(data));
+      return true;
+    } catch (error) {
+      console.error('Error writing to Redis URL:', error);
       return false;
     }
   }
@@ -429,16 +529,30 @@ app.post('/api/gallery', requireAdmin, (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'Пожалуйста, выберите файл для загрузки.' });
     }
+
+    if (IS_VERCEL && !useBlob) {
+      return res.status(400).json({ error: 'На Vercel для загрузки изображений нужно подключить Blob Storage.' });
+    }
     
     const { category, description } = req.body;
     if (!category) {
       return res.status(400).json({ error: 'Укажите категорию работы.' });
     }
+
+    let imageUrl = req.file.filename;
+    if (useBlob) {
+      try {
+        imageUrl = await uploadFileToBlob(req.file, 'photo');
+      } catch (error) {
+        console.error('Error uploading gallery image to Blob:', error);
+        return res.status(500).json({ error: 'Ошибка загрузки изображения в Blob Storage.' });
+      }
+    }
     
     const data = await readData();
     const newPhoto = {
       id: 'gal-' + Date.now(),
-      filename: req.file.filename,
+      filename: imageUrl,
       category: sanitizeInput(category),
       description: sanitizeInput(description) || '',
       timestamp: Date.now(),
@@ -466,15 +580,7 @@ app.delete('/api/gallery/:id', requireAdmin, async (req, res) => {
   }
   
   const photo = data.gallery[index];
-  const filePath = path.join(UPLOAD_DIR, photo.filename);
-  
-  if (fs.existsSync(filePath)) {
-    try {
-      fs.unlinkSync(filePath);
-    } catch (err) {
-      console.error('Error deleting photo file:', err);
-    }
-  }
+  await deleteUploadedImage(photo.filename, 'photo-');
   
   data.gallery.splice(index, 1);
   if (await writeData(data)) {
@@ -588,16 +694,31 @@ app.delete('/api/admin/applications/:id', requireAdmin, async (req, res) => {
 
 // 11. Admin: Upload master image (avatar or portfolio)
 app.post('/api/masters/upload', requireAdmin, (req, res) => {
-  uploadMasterImage.single('photo')(req, res, (err) => {
+  uploadMasterImage.single('photo')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
     if (!req.file) {
       return res.status(400).json({ error: 'Пожалуйста, выберите изображение.' });
     }
+
+    if (IS_VERCEL && !useBlob) {
+      return res.status(400).json({ error: 'На Vercel для загрузки изображений нужно подключить Blob Storage.' });
+    }
+
+    let imageUrl = `/img/${req.file.filename}`;
+    if (useBlob) {
+      try {
+        imageUrl = await uploadFileToBlob(req.file, 'master');
+      } catch (error) {
+        console.error('Error uploading master image to Blob:', error);
+        return res.status(500).json({ error: 'Ошибка загрузки изображения в Blob Storage.' });
+      }
+    }
+
     res.json({
       message: 'Изображение загружено.',
-      url: `/img/${req.file.filename}`,
+      url: imageUrl,
     });
   });
 });
@@ -613,6 +734,9 @@ app.put('/api/masters', requireAdmin, async (req, res) => {
     if (typeof value !== 'string') return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
+    if (isExternalUrl(trimmed)) {
+      return trimmed;
+    }
     if (trimmed.startsWith('/img/') || trimmed.startsWith('img/')) {
       return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
     }
@@ -645,24 +769,26 @@ app.put('/api/masters', requireAdmin, async (req, res) => {
   const oldMasters = data.masters || [];
   const newIds = new Set(sanitizedMasters.map((m) => m.id));
 
-  oldMasters
-    .filter((m) => !newIds.has(m.id))
-    .forEach(deleteMasterAssetFiles);
+  await Promise.all(
+    oldMasters
+      .filter((m) => !newIds.has(m.id))
+      .map(deleteMasterAssetFiles)
+  );
 
-  sanitizedMasters.forEach((newMaster) => {
+  await Promise.all(sanitizedMasters.map(async (newMaster) => {
     const oldMaster = oldMasters.find((m) => m.id === newMaster.id);
     if (!oldMaster) return;
 
     if (oldMaster.avatar && oldMaster.avatar !== newMaster.avatar) {
-      deleteUploadedMasterFile(oldMaster.avatar);
+      await deleteUploadedMasterFile(oldMaster.avatar);
     }
 
-    (oldMaster.portfolio || []).forEach((url) => {
-      if (!(newMaster.portfolio || []).includes(url)) {
-        deleteUploadedMasterFile(url);
-      }
-    });
-  });
+    await Promise.all((oldMaster.portfolio || []).map((url) => {
+      return (newMaster.portfolio || []).includes(url)
+        ? Promise.resolve()
+        : deleteUploadedMasterFile(url);
+    }));
+  }));
 
   data.masters = sanitizedMasters;
 
