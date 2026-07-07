@@ -8,7 +8,8 @@
     { href: 'gallery.html',  label: 'Галерея' },
     { href: 'masters.html',  label: 'Мастера' },
     { href: 'reviews.html',  label: 'Отзывы' },
-    { href: 'careers.html',  label: 'Карьера и обучение' },
+    { href: 'training.html', label: 'Обучение' },
+    { href: 'careers.html',  label: 'Карьера' },
     { href: 'contacts.html', label: 'Контакты' },
   ];
 
@@ -78,17 +79,18 @@
         <div class="footer-grid">
           <div>
             <div class="footer-brand">INDIAL</div>
-            <p class="footer-desc">Студия стрижек и сложного окрашивания в Перми. Выслушаем и учтем все ваши пожелания, сохраняя здоровье волос на премиальных материалах.</p>
+            <p class="footer-desc">ИНДИАЛ — студия здорового окрашивания и академия колористики в Перми. Создаем цвет, который сохраняет качество волос, и обучаем мастеров.</p>
           </div>
           <div>
             <p class="footer-col-title">Разделы</p>
             <ul class="footer-links">
               <li><a href="index.html"    class="footer-link">Главная</a></li>
-              <li><a href="services.html" class="footer-link">Услуги и цены</a></li>
+              <li><a href="services.html" class="footer-link">Окрашивание и восстановление</a></li>
               <li><a href="gallery.html"  class="footer-link">Галерея</a></li>
               <li><a href="masters.html"  class="footer-link">Мастера</a></li>
               <li><a href="reviews.html"  class="footer-link">Отзывы</a></li>
-              <li><a href="careers.html"  class="footer-link">Карьера и обучение</a></li>
+              <li><a href="training.html" class="footer-link">Обучение</a></li>
+              <li><a href="careers.html"  class="footer-link">Карьера</a></li>
               <li><a href="contacts.html" class="footer-link">Контакты</a></li>
             </ul>
           </div>
@@ -98,6 +100,9 @@
               <li class="footer-link">ул. Елькина, 14, Пермь</li>
               <li class="footer-link">Этаж 1, офис 7</li>
               <li><a href="tel:+79197194499" class="footer-link">+7 (919) 719-44-99</a></li>
+              <li><a href="https://wa.me/79197194499" target="_blank" class="footer-link">WhatsApp</a></li>
+              <li><a href="https://t.me/indial_perm" target="_blank" class="footer-link">Telegram</a></li>
+              <li><a href="https://www.instagram.com/indial_perm" target="_blank" class="footer-link">Instagram</a></li>
               <li class="footer-link">Ежедневно 10:00–20:00</li>
             </ul>
           </div>
@@ -123,6 +128,69 @@
     clearTimeout(t._timer);
     t._timer = setTimeout(() => t.classList.remove('show'), 4000);
   };
+
+  /* Training pricing 3D carousel */
+  const initTrainingPricingCarousel = () => {
+    const carousel = document.querySelector('.carousel-3d');
+    if (!carousel) return;
+
+    const rotateTo = (targetCard) => {
+      const currentPos = targetCard.dataset.pos;
+      if (currentPos !== 'left' && currentPos !== 'right') return;
+
+      const centerCard = carousel.querySelector('.pricing-card-3d[data-pos="center"]');
+      const leftCard = carousel.querySelector('.pricing-card-3d[data-pos="left"]');
+      const rightCard = carousel.querySelector('.pricing-card-3d[data-pos="right"]');
+      if (!centerCard || !leftCard || !rightCard) return;
+
+      [centerCard, leftCard, rightCard].forEach((card) => {
+        card.classList.remove('pos-left', 'pos-center', 'pos-right');
+      });
+
+      const nextPositions = currentPos === 'left'
+        ? [[leftCard, 'center'], [centerCard, 'right'], [rightCard, 'left']]
+        : [[rightCard, 'center'], [centerCard, 'left'], [leftCard, 'right']];
+
+      nextPositions.forEach(([card, pos]) => {
+        card.classList.add(`pos-${pos}`);
+        card.dataset.pos = pos;
+      });
+    };
+
+    const rotateByDirection = (direction) => {
+      const targetPos = direction === 'prev' ? 'left' : 'right';
+      const targetCard = carousel.querySelector(`.pricing-card-3d[data-pos="${targetPos}"]`);
+      if (targetCard) rotateTo(targetCard);
+    };
+
+    carousel.querySelectorAll('.pricing-card-3d').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        if (window.matchMedia('(max-width: 968px)').matches) return;
+        if (e.target.closest('.btn-primary') && card.dataset.pos === 'center') return;
+        if (card.dataset.pos === 'left' || card.dataset.pos === 'right') {
+          e.preventDefault();
+          rotateTo(card);
+        }
+      });
+
+      card.addEventListener('keydown', (e) => {
+        if (window.matchMedia('(max-width: 968px)').matches) return;
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        if (card.dataset.pos === 'left' || card.dataset.pos === 'right') {
+          e.preventDefault();
+          rotateTo(card);
+        }
+      });
+    });
+
+    document.querySelectorAll('.carousel-3d-arrow').forEach((button) => {
+      button.addEventListener('click', () => {
+        rotateByDirection(button.classList.contains('carousel-3d-arrow--prev') ? 'prev' : 'next');
+      });
+    });
+  };
+
+  initTrainingPricingCarousel();
 
   /* ==========================================================================
      SCROLL REVEAL ANIMATIONS (IntersectionObserver)

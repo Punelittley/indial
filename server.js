@@ -802,8 +802,18 @@ app.put('/api/masters', requireAdmin, async (req, res) => {
 // Serve Static Frontend Files
 // -------------------------------------------------------------
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: '7d',
   etag: true,
+  extensions: ['html'],
+  setHeaders: (res, filePath) => {
+    if (/\.(html|css|js)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      return;
+    }
+
+    res.setHeader('Cache-Control', 'public, max-age=604800');
+  },
 }));
 
 // 404 handler — don't redirect API misses to index.html
