@@ -712,6 +712,49 @@ ul { list-style: none; }
   filter: grayscale(8%);
 }
 
+/* HOME — PROMO BLOCK */
+.promo-section {
+  background: var(--white);
+  padding: 3rem 0;
+  border-top: 1px solid var(--pale-gray);
+  border-bottom: 1px solid var(--pale-gray);
+}
+
+.promo-block {
+  background: linear-gradient(135deg, #E8DCC8 0%, #F0E8D8 100%);
+  padding: 2.5rem 2rem;
+  border-left: 4px solid var(--black);
+  border-radius: 2px;
+}
+
+.promo-content {
+  max-width: 600px;
+}
+
+.promo-title {
+  font-family: var(--font-heading, 'Cormorant Garamond', serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--black);
+  line-height: 1.3;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.5px;
+}
+
+.promo-subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--black);
+  margin: 0;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .promo-section { padding: 2rem 0; }
+  .promo-block { padding: 2rem 1.5rem; }
+  .promo-title { font-size: 1.25rem; }
+}
+
 /* HOME — FOUNDER LETTER */
 .founder-section {
   display: grid;
