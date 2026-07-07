@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Мастера студии красоты INDIAL в Перми — профессиональные стилисты и колористы.">
-  <title>Мастера — INDIAL</title>
+  <meta name="description" content="Мастера студии красоты ИНДИАЛ в Перми — профессиональные стилисты и колористы.">
+  <title>Мастера — ИНДИАЛ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
@@ -516,7 +516,7 @@
     <section class="masters-intro">
       <div class="container masters-intro-inner">
         <div class="reveal">
-          <span class="sec-label">INDIAL · Пермь</span>
+          <span class="sec-label">ИНДИАЛ · Пермь</span>
           <h2 class="sec-title">Люди, которым доверяют <em>цвет, форму и настроение</em></h2>
         </div>
         <p class="masters-intro-text reveal">
@@ -588,7 +588,7 @@
       const lb = document.getElementById('portfolio-lb');
       const lbImg = document.getElementById('lb-img');
       const lbClose = document.getElementById('lb-close');
-      const fallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='800'><rect fill='%23F5F5F5' width='100%' height='100%'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236B6B6B' font-family='Arial' font-size='22'>INDIAL</text></svg>";
+      const fallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='800'><rect fill='%23F5F5F5' width='100%' height='100%'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236B6B6B' font-family='Arial' font-size='22'>%D0%98%D0%9D%D0%94%D0%98%D0%90%D0%9B</text></svg>";
 
       const escapeHtml = (value = '') => String(value)
         .replace(/&/g, '&amp;')
@@ -633,7 +633,7 @@
           </div>
           <div class="master-card-body">
             <div>
-              <span class="master-card-role">${escapeHtml(master.role || 'Мастер INDIAL')}</span>
+              <span class="master-card-role">${escapeHtml(master.role || 'Мастер ИНДИАЛ')}</span>
               <h2 class="master-card-name">${escapeHtml(master.name || 'Мастер')}</h2>
             </div>
             <div class="master-card-bottom">
@@ -668,7 +668,7 @@
         panelAvatar.src = master.avatar || fallback;
         panelAvatar.alt = master.name || '';
         panelName.textContent = master.name || 'Мастер';
-        panelRole.textContent = master.role || 'Мастер INDIAL';
+        panelRole.textContent = master.role || 'Мастер ИНДИАЛ';
         panelSpec.textContent = master.specialization || 'Информация скоро появится.';
         panelExp.textContent = master.experience || 'Информация скоро появится.';
 
