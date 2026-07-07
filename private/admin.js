@@ -293,25 +293,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const SERVICE_IMG_FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='90'><rect fill='%23E8E8E8' width='100%' height='100%'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236B6B6B' font-family='Arial' font-size='11'>Фото услуги</text></svg>";
+
   function createServiceRow(item) {
     const row = document.createElement('div');
     row.className = 'admin-service-row';
+    const initialImage = item.image ? getImageSrc(item.image) : '';
     row.innerHTML = `
-      <div class="form-group" style="margin-bottom:0">
-        <input type="text" class="form-input service-name-field" value="${item.name}" placeholder="Название услуги *" required>
+      <div class="service-img-panel">
+        <img class="service-img-preview" src="${initialImage ? escapeAttr(initialImage) : SERVICE_IMG_FALLBACK}" alt="Фото услуги" onerror="this.src='${SERVICE_IMG_FALLBACK}'">
+        <input type="file" class="service-img-file" accept="image/*" style="display:none">
+        <button class="btn-secondary btn-sm service-img-upload-btn" type="button">Фото</button>
       </div>
-      <div class="form-group" style="margin-bottom:0">
-        <input type="text" class="form-input service-price-field" value="${item.price}" placeholder="Цена *" required>
-      </div>
-      <div class="form-group" style="margin-bottom:0">
-        <input type="text" class="form-input service-duration-field" value="${item.duration}" placeholder="Длительность (например: 60 мин)" required>
-      </div>
-      <div class="form-group" style="margin-bottom:0">
-        <input type="text" class="form-input service-desc-field" value="${item.description || ''}" placeholder="Описание услуги">
+      <div class="service-fields-grid">
+        <div class="form-group" style="margin-bottom:0">
+          <input type="text" class="form-input service-name-field" value="${escapeAttr(item.name || '')}" placeholder="Название услуги *" required>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <input type="text" class="form-input service-price-field" value="${escapeAttr(item.price || '')}" placeholder="Цена *" required>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <input type="text" class="form-input service-duration-field" value="${escapeAttr(item.duration || '')}" placeholder="Длительность (например: 60 мин)" required>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <input type="text" class="form-input service-desc-field" value="${escapeAttr(item.description || '')}" placeholder="Описание услуги">
+        </div>
       </div>
       <button class="row-delete-btn" type="button" title="Удалить услугу">✕</button>
     `;
-    
+
+    // Store image path on the row
+    if (item.image) row.setAttribute('data-image', item.image);
+
+    // Upload image handler
+    const fileInput = row.querySelector('.service-img-file');
+    row.querySelector('.service-img-upload-btn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async () => {
+      if (!fileInput.files.length) return;
+      const url = await uploadMasterImageFile(fileInput.files[0]);
+      if (url) {
+        row.querySelector('.service-img-preview').src = url;
+        row.setAttribute('data-image', url);
+        fileInput.value = '';
+        showToast('Фото услуги загружено.');
+      }
+    });
+
     row.querySelector('.row-delete-btn').addEventListener('click', () => {
       row.remove();
     });
@@ -375,12 +402,15 @@ document.addEventListener('DOMContentLoaded', () => {
             priceInput.style.borderColor = '';
           }
   
+          const image = row.getAttribute('data-image') || '';
+
           items.push({
             id: 'item-' + Math.round(Math.random() * 1e9),
             name,
             price,
             duration: duration || '60 мин',
-            description
+            description,
+            image
           });
         });
   

@@ -425,10 +425,17 @@
       ];
 
       function getServiceImage(cat, item) {
+        // 1. Explicit image set in admin panel / data.json takes priority
+        if (item.image && String(item.image).trim() !== '') {
+          const img = String(item.image).trim();
+          return (img.startsWith('http') || img.startsWith('/')) ? img : '/img/' + img;
+        }
+        // 2. Fallback: match by service name
         const name = item.name || '';
         for (const [re, src] of ITEM_IMAGES) {
           if (re.test(name)) return src;
         }
+        // 3. Fallback: category default
         return CATEGORY_IMAGES[cat.id] || '/img/okrashivanie.jpg';
       }
 
