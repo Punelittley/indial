@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Панель управления — INDIAL</title>
+  <title>Панель управления — ИНДИАЛ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
@@ -15,7 +15,7 @@
     <!-- Left Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <span class="sidebar-brand-name">INDIAL</span>
+        <span class="sidebar-brand-name">ИНДИАЛ</span>
         <span class="sidebar-brand-sub">Admin Panel</span>
       </div>
       <nav class="sidebar-nav">
@@ -138,6 +138,21 @@
               </div>
               <button class="btn-primary" type="submit">Сохранить пароль</button>
             </form>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1.5rem;">
+          <div class="card-header">
+            <h3>Резервное копирование базы данных</h3>
+          </div>
+          <div class="card-body">
+            <p class="backup-hint">Скачайте полную копию базы (услуги, галерея, мастера, отзывы, заявки) или восстановите ранее сохранённую копию. Импорт заменит текущие данные.</p>
+            <div class="backup-actions">
+              <button class="btn-primary" type="button" id="export-db-btn">↓ Скачать базу данных</button>
+              <label class="btn-secondary backup-import-label" for="import-db-file">↑ Загрузить базу данных</label>
+              <input type="file" id="import-db-file" accept="application/json,.json" style="display:none;">
+            </div>
+            <span class="file-name-indicator" id="import-db-label">Файл не выбран</span>
           </div>
         </div>
       </section>

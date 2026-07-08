@@ -100,9 +100,9 @@ app.use(
 // Enable CORS
 app.use(cors());
 
-// Parse JSON and URL-encoded bodies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Parse JSON and URL-encoded bodies (raised limit to allow full DB import)
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
 // Global Rate Limiter (DDoS protection)
 const globalLimiter = rateLimit({
@@ -500,6 +500,56 @@ app.put('/api/admin/password', requireAdmin, async (req, res) => {
   return res.status(500).json({ error: 'Не удалось сохранить новый пароль.' });
 });
 
+
+// 2d. Admin: Export full database (backup)
+app.get('/api/admin/export', requireAdmin, async (req, res) => {
+  const data = await readData();
+  const exportData = {
+    services: data.services || [],
+    gallery: data.gallery || [],
+    reviews: data.reviews || [],
+    masters: data.masters || [],
+    applications: data.applications || [],
+    exportedAt: new Date().toISOString(),
+  };
+  const filename = `indial-backup-${new Date().toISOString().split('T')[0]}.json`;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.send(JSON.stringify(exportData, null, 2));
+});
+
+// 2e. Admin: Import full database (restore backup)
+app.post('/api/admin/import', requireAdmin, async (req, res) => {
+  const incoming = req.body;
+  if (!incoming || typeof incoming !== 'object' || Array.isArray(incoming)) {
+    return res.status(400).json({ error: 'Неверный формат файла базы данных.' });
+  }
+
+  const sections = ['services', 'gallery', 'reviews', 'masters', 'applications'];
+  const hasValidSection = sections.some((key) => Array.isArray(incoming[key]));
+  if (!hasValidSection) {
+    return res.status(400).json({ error: 'Файл не содержит корректных данных (услуги, галерея, мастера...).' });
+  }
+
+  const data = await readData();
+
+  sections.forEach((key) => {
+    if (Array.isArray(incoming[key])) {
+      data[key] = incoming[key];
+    }
+  });
+
+  // Preserve admin password hash if present in the backup
+  if (incoming.adminPasswordHash) {
+    data.adminPasswordHash = incoming.adminPasswordHash;
+  }
+
+  if (await writeData(data)) {
+    res.json({ message: 'База данных успешно импортирована!' });
+  } else {
+    res.status(500).json({ error: 'Ошибка сохранения базы данных.' });
+  }
+});
 
 // 3. Admin: Update Services (Price list)
 app.put('/api/services', requireAdmin, async (req, res) => {

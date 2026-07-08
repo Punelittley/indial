@@ -1005,6 +1005,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ==========================================
+  // DATABASE BACKUP / RESTORE
+  // ==========================================
+  const exportDbBtn = document.getElementById('export-db-btn');
+  const importDbFile = document.getElementById('import-db-file');
+  const importDbLabel = document.getElementById('import-db-label');
+
+  if (exportDbBtn) {
+    exportDbBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/admin/export', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('Ошибка скачивания базы данных.');
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `indial-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('База данных скачана.');
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  }
+
+  if (importDbFile) {
+    importDbFile.addEventListener('change', async () => {
+      if (!importDbFile.files.length) return;
+      const file = importDbFile.files[0];
+      if (importDbLabel) importDbLabel.textContent = file.name;
+
+      const proceed = confirm('Импорт заменит текущие данные (услуги, галерею, мастеров, отзывы, заявки). Продолжить?');
+      if (!proceed) {
+        importDbFile.value = '';
+        if (importDbLabel) importDbLabel.textContent = 'Файл не выбран';
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch (parseErr) {
+          throw new Error('Файл не является корректным JSON.');
+        }
+
+        const res = await fetch('/api/admin/import', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(parsed),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Ошибка импорта.');
+
+        showToast(result.message || 'База данных импортирована!');
+        importDbFile.value = '';
+        if (importDbLabel) importDbLabel.textContent = 'Файл не выбран';
+        loadAllDashboardData();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  }
+
   // Run on startup
   checkAuth();
 });
