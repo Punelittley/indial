@@ -197,6 +197,8 @@
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .svc-modal.open { display: flex; }
@@ -215,8 +217,9 @@
       background: #fff;
       width: 100%;
       max-width: 760px;
-      max-height: 90vh;
+      max-height: 85vh;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       display: grid;
       grid-template-columns: 1fr 1.2fr;
       animation: svcModalIn 0.3s ease;
@@ -301,10 +304,10 @@
     .svc-modal-book:hover { opacity: 0.85; }
 
     .svc-modal-close {
-      position: absolute;
+      position: fixed;
       top: 0.75rem;
       right: 0.75rem;
-      z-index: 2;
+      z-index: 1001;
       width: 40px;
       height: 40px;
       background: #fff;
@@ -449,13 +452,18 @@
         modalPrice.textContent = formattedPrice;
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
+        // Scroll modal box to top
+        document.querySelector('.svc-modal-box').scrollTop = 0;
+        // Prevent background scroll
         document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
       }
 
       function closeServiceModal() {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
       }
 
       document.getElementById('svc-modal-close').addEventListener('click', closeServiceModal);
