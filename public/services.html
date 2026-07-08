@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Прайс-лист студии красоты INDIAL в Перми. Цены на стрижки, сложные окрашивания, уходы и макияж. Удобный и понятный каталог услуг.">
-  <title>Окрашивание и восстановление — INDIAL</title>
+  <meta name="description" content="Прайс-лист студии красоты ИНДИАЛ в Перми. Цены на стрижки, сложные окрашивания, уходы и макияж. Удобный и понятный каталог услуг.">
+  <title>Окрашивание и восстановление — ИНДИАЛ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap">
@@ -185,6 +185,148 @@
       .svc-row { gap: 1.5rem; }
       .svc-cat-title { font-size: 1.8rem; }
     }
+
+    /* ── Service Modal ── */
+    .svc-row { cursor: pointer; }
+
+    .svc-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .svc-modal.open { display: flex; }
+
+    .svc-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .svc-modal-box {
+      position: relative;
+      z-index: 1;
+      background: #fff;
+      width: 100%;
+      max-width: 760px;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      animation: svcModalIn 0.3s ease;
+    }
+
+    @keyframes svcModalIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .svc-modal-img {
+      min-height: 100%;
+      background: var(--pale-gray, #EFEFEF);
+    }
+
+    .svc-modal-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .svc-modal-body {
+      padding: 2.5rem 2.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .svc-modal-cat {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--mid-gray, #6B6B6B);
+    }
+
+    .svc-modal-title {
+      font-family: var(--font-heading, 'Cormorant Garamond', serif);
+      font-size: 1.9rem;
+      font-weight: 400;
+      color: var(--black, #0A0A0A);
+      line-height: 1.15;
+    }
+
+    .svc-modal-meta {
+      font-size: 0.78rem;
+      color: var(--mid-gray, #6B6B6B);
+      font-weight: 300;
+    }
+
+    .svc-modal-desc {
+      font-size: 0.88rem;
+      color: var(--mid-gray, #6B6B6B);
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    .svc-modal-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--black, #0A0A0A);
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--pale-gray, #EFEFEF);
+    }
+
+    .svc-modal-book {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--black, #0A0A0A);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      margin-top: 0.5rem;
+      transition: opacity 0.25s;
+    }
+
+    .svc-modal-book:hover { opacity: 0.85; }
+
+    .svc-modal-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border: 1px solid var(--pale-gray, #EFEFEF);
+      color: var(--black, #0A0A0A);
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s;
+    }
+
+    .svc-modal-close:hover { background: var(--pale-gray, #EFEFEF); }
+
+    @media (max-width: 640px) {
+      .svc-modal { padding: 1rem; }
+      .svc-modal-box { grid-template-columns: 1fr; }
+      .svc-modal-img { max-height: 220px; overflow: hidden; }
+      .svc-modal-body { padding: 1.75rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -229,12 +371,98 @@
 
   <footer class="site-footer" id="site-footer"></footer>
 
-  <script src="/js/shared.js?v=20260706-8"></script>
+  <!-- ══ SERVICE MODAL ══ -->
+  <div class="svc-modal" id="svc-modal" aria-hidden="true">
+    <div class="svc-modal-backdrop" id="svc-modal-backdrop"></div>
+    <div class="svc-modal-box" role="dialog" aria-modal="true" aria-labelledby="svc-modal-title">
+      <button class="svc-modal-close" id="svc-modal-close" aria-label="Закрыть">&times;</button>
+      <div class="svc-modal-img">
+        <img id="svc-modal-img" src="/img/okrashivanie.jpg" alt="" loading="lazy" decoding="async">
+      </div>
+      <div class="svc-modal-body">
+        <span class="svc-modal-cat" id="svc-modal-cat"></span>
+        <h3 class="svc-modal-title" id="svc-modal-title"></h3>
+        <div class="svc-modal-meta" id="svc-modal-meta"></div>
+        <p class="svc-modal-desc" id="svc-modal-desc"></p>
+        <div class="svc-modal-price" id="svc-modal-price"></div>
+        <a href="https://vk.com/indial59" target="_blank" rel="noopener" class="svc-modal-book" id="svc-modal-book">Записаться</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/shared.js?v=20260707-2"></script>
   <script>
     (async () => {
       const anchorsContainer = document.getElementById('sidebar-anchors-container');
       const panelsContainer = document.getElementById('services-panels');
       const mobileCatsContainer = document.getElementById('mobile-categories');
+
+      /* ── Service Modal logic ── */
+      const modal = document.getElementById('svc-modal');
+      const modalImg = document.getElementById('svc-modal-img');
+      const modalCat = document.getElementById('svc-modal-cat');
+      const modalTitle = document.getElementById('svc-modal-title');
+      const modalMeta = document.getElementById('svc-modal-meta');
+      const modalDesc = document.getElementById('svc-modal-desc');
+      const modalPrice = document.getElementById('svc-modal-price');
+
+      const CATEGORY_IMAGES = {
+        cuts: '/img/womanstrizka.jpg',
+        styling: '/img/hair_bob.jpg',
+        coloring: '/img/okrashivanie.jpg',
+        extensions: '/img/podrav.jpg',
+        care: '/img/4lech.jpg',
+        makeup: '/img/makeup_evening.jpg'
+      };
+
+      const ITEM_IMAGES = [
+        [/airtouch/i, '/img/hair_airtouch.jpg'],
+        [/тонирован/i, '/img/tonir.jpg'],
+        [/мелирован/i, '/img/melir.jpg'],
+        [/мужская/i, '/img/myzskaya.jpg'],
+        [/смывка|выход из/i, '/img/6premexod.jpg'],
+        [/блонд/i, '/img/okr1.jpg']
+      ];
+
+      function getServiceImage(cat, item) {
+        // 1. Explicit image set in admin panel / data.json takes priority
+        if (item.image && String(item.image).trim() !== '') {
+          const img = String(item.image).trim();
+          return (img.startsWith('http') || img.startsWith('/')) ? img : '/img/' + img;
+        }
+        // 2. Fallback: match by service name
+        const name = item.name || '';
+        for (const [re, src] of ITEM_IMAGES) {
+          if (re.test(name)) return src;
+        }
+        // 3. Fallback: category default
+        return CATEGORY_IMAGES[cat.id] || '/img/okrashivanie.jpg';
+      }
+
+      function openServiceModal(cat, item, formattedPrice) {
+        modalImg.src = getServiceImage(cat, item);
+        modalImg.alt = item.name + ' — студия ИНДИАЛ';
+        modalCat.textContent = cat.categoryName;
+        modalTitle.textContent = item.name;
+        modalMeta.textContent = item.duration ? 'Длительность: ' + item.duration : '';
+        modalDesc.textContent = item.description || '';
+        modalPrice.textContent = formattedPrice;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeServiceModal() {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      document.getElementById('svc-modal-close').addEventListener('click', closeServiceModal);
+      document.getElementById('svc-modal-backdrop').addEventListener('click', closeServiceModal);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) closeServiceModal();
+      });
 
       let services = [];
       try {
@@ -307,6 +535,25 @@
           </div>
         `;
         panelsContainer.appendChild(block);
+
+        // Make each service row clickable — opens modal with details
+        block.querySelectorAll('.svc-row').forEach((row, i) => {
+          const item = (cat.items || [])[i];
+          if (!item) return;
+          const formattedPrice = !isNaN(item.price) && item.price.trim() !== ''
+            ? parseFloat(item.price).toLocaleString('ru-RU') + ' ₽'
+            : item.price;
+          row.setAttribute('role', 'button');
+          row.setAttribute('tabindex', '0');
+          row.setAttribute('aria-label', 'Подробнее: ' + item.name);
+          row.addEventListener('click', () => openServiceModal(cat, item, formattedPrice));
+          row.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openServiceModal(cat, item, formattedPrice);
+            }
+          });
+        });
       });
 
       function scrollToCategory(id) {

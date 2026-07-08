@@ -27,7 +27,7 @@
   if (headerEl) {
     headerEl.innerHTML = `
       <div class="container header-inner">
-        <a href="index.html" class="logo">INDIAL</a>
+        <a href="index.html" class="logo">ИНДИАЛ</a>
         <nav class="main-nav" id="main-nav">${navHTML}</nav>
         <div style="display:flex;align-items:center;gap:1.5rem;">
           <a href="${bookingUrl}" target="_blank" class="header-book">Записаться</a>
@@ -78,7 +78,7 @@
       <div class="container">
         <div class="footer-grid">
           <div>
-            <div class="footer-brand">INDIAL</div>
+            <div class="footer-brand">ИНДИАЛ</div>
             <p class="footer-desc">ИНДИАЛ — студия здорового окрашивания и академия колористики в Перми. Создаем цвет, который сохраняет качество волос, и обучаем мастеров.</p>
           </div>
           <div>
