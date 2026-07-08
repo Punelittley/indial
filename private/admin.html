@@ -140,6 +140,21 @@
             </form>
           </div>
         </div>
+
+        <div class="card" style="margin-top:1.5rem;">
+          <div class="card-header">
+            <h3>Резервное копирование базы данных</h3>
+          </div>
+          <div class="card-body">
+            <p class="backup-hint">Скачайте полную копию базы (услуги, галерея, мастера, отзывы, заявки) или восстановите ранее сохранённую копию. Импорт заменит текущие данные.</p>
+            <div class="backup-actions">
+              <button class="btn-primary" type="button" id="export-db-btn">↓ Скачать базу данных</button>
+              <label class="btn-secondary backup-import-label" for="import-db-file">↑ Загрузить базу данных</label>
+              <input type="file" id="import-db-file" accept="application/json,.json" style="display:none;">
+            </div>
+            <span class="file-name-indicator" id="import-db-label">Файл не выбран</span>
+          </div>
+        </div>
       </section>
 
     </main>
