@@ -595,8 +595,8 @@
               const isActive = btn.dataset.target === activeId;
               btn.classList.toggle('active', isActive);
               if (isActive) {
-                // Scroll button into view inside mobile category bar
-                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                // Scroll button into view inside mobile category bar (without smooth scroll to avoid page jump)
+                btn.parentElement.scrollLeft = btn.offsetLeft - btn.parentElement.offsetWidth / 2 + btn.offsetWidth / 2;
               }
             });
           }
