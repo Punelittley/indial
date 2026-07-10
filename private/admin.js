@@ -749,11 +749,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="form-group">
             <label class="form-label">Специализация</label>
-            <textarea class="form-input master-spec-field" rows="3" placeholder="Чем занимается мастер">${escapeAttr(master.specialization || '')}</textarea>
+            <textarea class="form-input master-spec-field" rows="3" placeholder="Чем занимается мастер">${master.specialization || ''}</textarea>
           </div>
           <div class="form-group">
             <label class="form-label">Опыт</label>
-            <textarea class="form-input master-exp-field" rows="3" placeholder="Опыт работы, обучение">${escapeAttr(master.experience || '')}</textarea>
+            <textarea class="form-input master-exp-field" rows="3" placeholder="Опыт работы, обучение">${master.experience || ''}</textarea>
           </div>
           <div class="master-portfolio-section">
             <label class="form-label">Портфолио работ</label>
