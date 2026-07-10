@@ -25,6 +25,7 @@ const PASSWORD_HASH_DIGEST = 'sha512';
 // Environment detection
 const IS_VERCEL = !!process.env.VERCEL;
 const IS_RENDER = !!process.env.RENDER;
+const useBlob = !!(process.env.BLOB_STORE_ID && process.env.BLOB_READ_WRITE_TOKEN);
 
 const hashAdminPassword = (password) => {
   const salt = crypto.randomBytes(16).toString('hex');
@@ -481,7 +482,7 @@ app.put('/api/admin/password', requireAdmin, async (req, res) => {
   }
 
   if (String(newPassword).length < 8) {
-    return res.status(400).json({ error: 'Новый пароль должен быть не короче 8 символов.' });
+    return res.status(400).json({ error: 'Н��вый пароль должен быть не короче 8 символов.' });
   }
 
   const data = await readData();
