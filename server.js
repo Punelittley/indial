@@ -66,13 +66,20 @@ const verifyAdminPassword = (password, storedPassword) => {
 };
 
 // Paths
-const DATA_FILE = path.join(__dirname, 'data.json');
-const UPLOAD_DIR = path.join(__dirname, 'public', 'img');
-const IS_VERCEL = process.env.VERCEL === '1' || !!process.env.VERCEL_ENV;
-const useBlob = !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
+// Use Render Disk (/data) if available, otherwise use project root (local development)
+const DATA_DIR = process.env.RENDER ? '/data' : __dirname;
+const DATA_FILE = path.join(DATA_DIR, 'data.json');
 
-// Ensure upload directory exists
-if (!IS_VERCEL && !fs.existsSync(UPLOAD_DIR)) {
+// Ensure data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+// Use Render Disk for uploads, or local directory for development
+const UPLOAD_DIR = process.env.RENDER 
+  ? '/data/img'
+  : path.join(__dirname, 'public', 'img');
+
+if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
@@ -123,7 +130,9 @@ const makeUploadFilename = (prefix, originalName) => {
   return `${prefix}-${uniqueSuffix}${ext}`;
 };
 
-const useMemoryUploads = IS_VERCEL || useBlob;
+// Use memory uploads only on Vercel with Blob, or when explicitly using Blob
+// On Render Disk, use disk storage. On localhost, use disk storage.
+const useMemoryUploads = IS_VERCEL && useBlob;
 
 const storage = useMemoryUploads ? multer.memoryStorage() : multer.diskStorage({
   destination: (req, file, cb) => {
@@ -472,7 +481,7 @@ app.put('/api/admin/password', requireAdmin, async (req, res) => {
 
   const passwordValues = [currentPassword, newPassword, confirmPassword];
   if (passwordValues.some(value => typeof value !== 'string' || !value)) {
-    return res.status(400).json({ error: 'Заполните все поля смены пароля.' });
+    return res.status(400).json({ error: 'Заполните все поля с��ены пароля.' });
   }
 
   if (newPassword !== confirmPassword) {
