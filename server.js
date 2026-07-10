@@ -22,6 +22,10 @@ const PASSWORD_HASH_ITERATIONS = 100000;
 const PASSWORD_HASH_KEYLEN = 64;
 const PASSWORD_HASH_DIGEST = 'sha512';
 
+// Environment detection
+const IS_VERCEL = !!process.env.VERCEL;
+const IS_RENDER = !!process.env.RENDER;
+
 const hashAdminPassword = (password) => {
   const salt = crypto.randomBytes(16).toString('hex');
   const hash = crypto
@@ -473,7 +477,7 @@ app.put('/api/admin/password', requireAdmin, async (req, res) => {
   }
 
   if (newPassword !== confirmPassword) {
-    return res.status(400).json({ error: 'Новый пароль и подтверждение не совпадают.' });
+    return res.status(400).json({ error: 'Новый пароль и подтверждение не совпад��ют.' });
   }
 
   if (String(newPassword).length < 8) {
