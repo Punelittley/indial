@@ -68,10 +68,7 @@ const verifyAdminPassword = (password, storedPassword) => {
 // Paths
 const DATA_FILE = path.join(__dirname, 'data.json');
 const UPLOAD_DIR = path.join(__dirname, 'public', 'img');
-const IS_VERCEL = process.env.VERCEL === '1' || !!process.env.VERCEL_ENV;
-const useBlob = !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
 
-// Ensure upload directory exists
 if (!IS_VERCEL && !fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
@@ -472,7 +469,7 @@ app.put('/api/admin/password', requireAdmin, async (req, res) => {
 
   const passwordValues = [currentPassword, newPassword, confirmPassword];
   if (passwordValues.some(value => typeof value !== 'string' || !value)) {
-    return res.status(400).json({ error: 'Заполните все поля смены пароля.' });
+    return res.status(400).json({ error: 'Заполните все поля с��ены пароля.' });
   }
 
   if (newPassword !== confirmPassword) {
@@ -692,7 +689,7 @@ app.delete('/api/reviews/:id', requireAdmin, async (req, res) => {
 app.post('/api/apply', async (req, res) => {
   const { candidateName, phone, email, type, position, message } = req.body;
   if (!candidateName || !phone || !type || !position) {
-    return res.status(400).json({ error: 'Заполните все обязательные поля заявки.' });
+    return res.status(400).json({ error: 'Заполните все обязател��ные поля заявки.' });
   }
   
   const data = await readData();
