@@ -66,20 +66,10 @@ const verifyAdminPassword = (password, storedPassword) => {
 };
 
 // Paths
-// Use Render Disk (/data) if available, otherwise use project root (local development)
-const DATA_DIR = process.env.RENDER ? '/data' : __dirname;
-const DATA_FILE = path.join(DATA_DIR, 'data.json');
+const DATA_FILE = path.join(__dirname, 'data.json');
+const UPLOAD_DIR = path.join(__dirname, 'public', 'img');
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-// Use Render Disk for uploads, or local directory for development
-const UPLOAD_DIR = process.env.RENDER 
-  ? '/data/img'
-  : path.join(__dirname, 'public', 'img');
-
-if (!fs.existsSync(UPLOAD_DIR)) {
+if (!IS_VERCEL && !fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
@@ -130,9 +120,7 @@ const makeUploadFilename = (prefix, originalName) => {
   return `${prefix}-${uniqueSuffix}${ext}`;
 };
 
-// Use memory uploads only on Vercel with Blob, or when explicitly using Blob
-// On Render Disk, use disk storage. On localhost, use disk storage.
-const useMemoryUploads = IS_VERCEL && useBlob;
+const useMemoryUploads = IS_VERCEL || useBlob;
 
 const storage = useMemoryUploads ? multer.memoryStorage() : multer.diskStorage({
   destination: (req, file, cb) => {
@@ -701,7 +689,7 @@ app.delete('/api/reviews/:id', requireAdmin, async (req, res) => {
 app.post('/api/apply', async (req, res) => {
   const { candidateName, phone, email, type, position, message } = req.body;
   if (!candidateName || !phone || !type || !position) {
-    return res.status(400).json({ error: 'Заполните все обязательные поля заявки.' });
+    return res.status(400).json({ error: 'Заполните все обязател��ные поля заявки.' });
   }
   
   const data = await readData();
