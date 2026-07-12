@@ -103,45 +103,15 @@
       <!-- Documents -->
       <section class="license-docs">
         <h2 class="license-docs-title">Документы</h2>
-        <p class="license-docs-hint">Официальные документы доступны для просмотра и скачивания.</p>
-        <ul class="docs-list">
-          <li>
-            <a href="#" target="_blank" rel="noopener" class="doc-item">
-              <span class="doc-item-left">
-                <span class="doc-icon"><i class="fa-solid fa-file-lines"></i></span>
-                <span class="doc-text">
-                  <span class="doc-name">Выписка из реестра лицензий</span>
-                  <span class="doc-meta">PDF · 20.05.2022</span>
-                </span>
-              </span>
-              <span class="doc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-          </li>
-          <li>
-            <a href="#" target="_blank" rel="noopener" class="doc-item">
-              <span class="doc-item-left">
-                <span class="doc-icon"><i class="fa-solid fa-file-contract"></i></span>
-                <span class="doc-text">
-                  <span class="doc-name">Реестровая выписка</span>
-                  <span class="doc-meta">PDF</span>
-                </span>
-              </span>
-              <span class="doc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-          </li>
-          <li>
-            <a href="#" target="_blank" rel="noopener" class="doc-item">
-              <span class="doc-item-left">
-                <span class="doc-icon"><i class="fa-solid fa-book-open"></i></span>
-                <span class="doc-text">
-                  <span class="doc-name">Образовательная программа «Колористика»</span>
-                  <span class="doc-meta">DOCX</span>
-                </span>
-              </span>
-              <span class="doc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-          </li>
-        </ul>
+        <p class="license-docs-hint">Все официальные документы собраны в одной папке на Яндекс.Диске.</p>
+        <a href="https://disk.yandex.ru/d/sv9jw54x2dOlKA" target="_blank" rel="noopener" class="docs-cloud">
+          <span class="docs-cloud-icon"><i class="fa-brands fa-yandex"></i></span>
+          <span class="docs-cloud-text">
+            <span class="docs-cloud-name">Документы на Яндекс.Диске</span>
+            <span class="docs-cloud-meta">Просмотр и скачивание · открывается в новой вкладке</span>
+          </span>
+          <span class="docs-cloud-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+        </a>
       </section>
 
     </div>
@@ -289,73 +259,60 @@
       margin: 0 0 1.75rem 0;
     }
 
-    .docs-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
+    .docs-cloud {
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      align-items: center;
+      gap: 1.25rem;
       max-width: 720px;
-    }
-
-    .doc-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 1.25rem 1.5rem;
+      padding: 1.75rem 2rem;
       border: 1px solid var(--pale-gray, #EFEFEF);
-      background: #fff;
+      background: var(--off-white, #FAFAFA);
       text-decoration: none;
-      transition: border-color 0.25s, transform 0.25s;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
     }
 
-    .doc-item:hover {
+    .docs-cloud:hover {
       border-color: var(--black, #0A0A0A);
-      transform: translateX(4px);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px -18px rgba(10, 10, 10, 0.45);
     }
 
-    .doc-item-left {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .doc-icon {
+    .docs-cloud-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 44px;
-      height: 44px;
-      background: var(--off-white, #FAFAFA);
-      color: var(--black, #0A0A0A);
-      font-size: 1.1rem;
+      width: 56px;
+      height: 56px;
+      background: var(--black, #0A0A0A);
+      color: #fff;
+      font-size: 1.5rem;
       flex-shrink: 0;
     }
 
-    .doc-text {
+    .docs-cloud-text {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.35rem;
+      flex: 1;
     }
 
-    .doc-name {
-      font-size: 0.95rem;
+    .docs-cloud-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
       font-weight: 500;
       color: var(--black, #0A0A0A);
+      line-height: 1.2;
     }
 
-    .doc-meta {
-      font-size: 0.78rem;
+    .docs-cloud-meta {
+      font-size: 0.8rem;
       letter-spacing: 0.04em;
-      text-transform: uppercase;
       color: var(--mid-gray, #6B6B6B);
     }
 
-    .doc-arrow {
+    .docs-cloud-arrow {
       color: var(--black, #0A0A0A);
-      font-size: 0.9rem;
+      font-size: 1rem;
       flex-shrink: 0;
     }
 
@@ -374,8 +331,15 @@
         margin-bottom: 2.5rem;
       }
 
-      .doc-item {
-        padding: 1rem 1.15rem;
+      .docs-cloud {
+        padding: 1.25rem 1.25rem;
+        gap: 1rem;
+      }
+
+      .docs-cloud-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
       }
     }
   </style>
