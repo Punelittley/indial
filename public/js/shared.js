@@ -11,6 +11,7 @@
     { href: 'training.html', label: 'Обучение' },
     { href: 'careers.html',  label: 'Карьера' },
     { href: 'contacts.html', label: 'Контакты' },
+    { href: 'license.html',  label: 'Лицензия' },
   ];
 
   const bookingUrl = "https://vk.com/indial59?w=app51715800_-104632367";
